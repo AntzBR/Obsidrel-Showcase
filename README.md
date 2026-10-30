@@ -4,7 +4,7 @@ Official public showcase content for [Obsidrel](https://obsidrel.com/). The Core
 
 This repository contains **converted Obsidrel definitions and Minecraft resource-pack assets only**. It is not a catalog, an importer, or an addon. The showcase can be changed independently of the Core's release cycle.
 
-> **Status:** Repository structure only. No showcase content has been published yet. The Core does not yet download these releases; that integration will be implemented separately.
+> **Status:** Repository structure only; no official third-party Showcase assets have been published. The Core's remote downloader and dynamic catalog have been tested separately. Official publication remains gated on contributor authorization, technical validation, and a finalized content license.
 
 ## Showcase ZIP layout
 
@@ -52,7 +52,7 @@ Only the folders needed by the content have to exist. `resources/` contains YAML
 
 Do not copy `SourceImporter/cache`, `SourceImporter/reports`, `pack/generated`, server configuration, logs, or storage data.
 
-The Core's future showcase installer will discover definitions automatically and build the visual menu from the installed showcase content. No Java-side hardcoded list is intended.
+The Core's showcase installer discovers definitions and builds the visual menu from installed showcase content. No Java-side hardcoded list is intended.
 
 ## Publishing a version
 
@@ -68,10 +68,10 @@ The GitHub Actions workflow validates the layout and publishes two **GitHub Rele
 - `showcase.zip` — package consumed by the Core
 - `showcase.sha256` — SHA-256 checksum of the ZIP
 
-A release with no resource YAMLs is rejected. Publishing a new release does not imply automatic updates of installed servers. The Core's future downloader should install only on first setup or after an explicit update action.
+A release with no resource YAMLs is rejected. Publishing a new release does not imply automatic updates of installed servers. The Core's downloader follows its configured repository and update policy.
 
 **Do not tag/publish until assets have been tested and creators have approved public redistribution.**
 
 ## Licensing and attribution
 
-No blanket license is granted for contributed textures, models or third-party work. Each partner's written redistribution permission must cover the public GitHub repository, downloadable ZIP, Minecraft client resource pack, and the intended Showcase distribution. See [ATTRIBUTION.md](ATTRIBUTION.md).
+No blanket license is granted for contributed textures, models or third-party work. Each partner's written redistribution permission must cover the public GitHub repository, downloadable ZIP, Minecraft client resource pack, and the intended Showcase distribution. See [ATTRIBUTION.md](ATTRIBUTION.md) and the [contribution approval process](docs/legal/CONTRIBUTION-PROCESS.md). The [end-user content license](docs/legal/END-USER-CONTENT-LICENSE.DRAFT.md) remains a **draft and is not yet in effect**.
