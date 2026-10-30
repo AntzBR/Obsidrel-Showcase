@@ -1,0 +1,12 @@
+# Release artifacts generated from source content
+/showcase.zip
+/showcase.sha256
+
+# Local system / editor artifacts
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.settings/
+.project
+.classpath

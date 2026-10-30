@@ -1,0 +1,29 @@
+name: Publish Showcase
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged content
+        uses: actions/checkout@v4
+
+      - name: Validate and build showcase package
+        run: python3 scripts/build_showcase.py
+
+      - name: Publish ZIP and SHA-256 to GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            showcase.zip showcase.sha256 \
+            --verify-tag \
+            --title "Obsidrel Showcase ${GITHUB_REF_NAME}" \
+            --generate-notes
