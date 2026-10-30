@@ -4,7 +4,31 @@ Official public showcase content for [Obsidrel](https://obsidrel.com/). The Core
 
 This repository contains **converted Obsidrel definitions and Minecraft resource-pack assets only**. It is not a catalog, an importer, or an addon. The showcase can be changed independently of the Core's release cycle.
 
-> **Status:** Repository structure only. No showcase content has been published yet. The Core does not yet download these releases; that integration will be implemented separately.
+> **Status:** Repository structure only; no official third-party Showcase assets have been published. The Core's remote downloader and dynamic catalog have been tested separately. Official publication remains gated on contributor authorization, technical validation, and a finalized content license.
+
+## Installing the Showcase on a Minecraft server
+
+> No official Showcase Release is available yet. The following instructions apply once an approved, non-draft Release containing `showcase.zip` and `showcase.sha256` has been published.
+
+Install an Obsidrel Core build that supports the remote Showcase. In `plugins/Obsidrel/config.yml`, use:
+
+```yaml
+Showcase:
+  enabled: true
+  menu: showcase
+  download:
+    enabled: true
+    repository: "AntzBR/Obsidrel-Showcase"
+    auto-update: false
+  resource-pack:
+    auto-build: true
+```
+
+Restart the Minecraft server (a full restart, not a plugin-manager hot reload). Obsidrel checks the configured GitHub repository, downloads the latest published Release when needed, validates the `showcase.zip` SHA-256 against `showcase.sha256`, installs the YAML definitions, and prepares the resource pack. Open the dynamic Showcase menu with `/obsidrel showcase`.
+
+**Update behavior:** With `auto-update: false` (the Core default), an already installed repository is not checked for newer versions on every startup. A first installation or a change of repository triggers a download check. With `auto-update: true`, Obsidrel checks for a newer published Release at startup; this is not a live background update service. A Release must be published (not a draft or prerelease) for GitHub's latest-release endpoint to find it.
+
+**Local customization:** The installer tracks runtime YAMLs created from the Showcase. When a tracked YAML has been edited by the administrator, Obsidrel preserves the local copy and keeps its content available to the dynamic menu while its corresponding remote definition remains present. Separate, unmanaged runtime files are not overwritten. **Do not edit files inside `plugins/Obsidrel/pack/sources/showcase/` expecting them to survive synchronization**: that managed resource-pack source directory is replaced from the selected Showcase Release. Keep custom pack assets in a separate source or back them up.
 
 ## Showcase ZIP layout
 
@@ -52,26 +76,46 @@ Only the folders needed by the content have to exist. `resources/` contains YAML
 
 Do not copy `SourceImporter/cache`, `SourceImporter/reports`, `pack/generated`, server configuration, logs, or storage data.
 
-The Core's future showcase installer will discover definitions automatically and build the visual menu from the installed showcase content. No Java-side hardcoded list is intended.
+The Core's showcase installer discovers definitions and builds the visual menu from installed showcase content. No Java-side hardcoded list is intended.
 
 ## Publishing a version
 
-After committing **real, authorized content**, create and push a version tag, for example:
+Only publish **tested, authorized content**. Every official Release must contain these two assets:
+
+- `showcase.zip` — the content package consumed by Obsidrel Core
+- `showcase.sha256` — the SHA-256 checksum of that ZIP
+
+The build script validates the layout and rejects releases without resource YAMLs. The Core's downloader selects the latest **published, non-prerelease** GitHub Release according to the configured repository and update policy.
+
+### Automatic publishing (GitHub Actions)
+
+A version tag starting with `v` triggers `.github/workflows/release-showcase.yml`, which builds the package and publishes the GitHub Release:
 
 ```bash
 git tag v1.0.0
 git push origin v1.0.0
 ```
 
-The GitHub Actions workflow validates the layout and publishes two **GitHub Release assets**:
+This uses GitHub Actions minutes/quota. Only use this path when automated runs are intended and available.
 
-- `showcase.zip` — package consumed by the Core
-- `showcase.sha256` — SHA-256 checksum of the ZIP
+### Manual publishing (without triggering GitHub Actions)
 
-A release with no resource YAMLs is rejected. Publishing a new release does not imply automatic updates of installed servers. The Core's future downloader should install only on first setup or after an explicit update action.
+When Actions usage is restricted, use a tag **not starting with `v`** because the workflow listens only for `v*` tags:
 
-**Do not tag/publish until assets have been tested and creators have approved public redistribution.**
+```bash
+python3 scripts/build_showcase.py
+git tag showcase-1.0.0
+git push origin showcase-1.0.0
+gh release create showcase-1.0.0 showcase.zip showcase.sha256 \
+  --verify-tag --latest \
+  --title "Obsidrel Showcase 1.0.0" \
+  --notes "Approved Showcase content release."
+```
+
+Run this from an up-to-date checkout of the intended release commit, with GitHub CLI (`gh`) authenticated. The Release must not be marked as a draft or prerelease. The Core verifies the ZIP checksum before installing it.
+
+**Do not tag or publish until all assets have been tested, the rights holders have approved redistribution, and the public content license has been finalized.**
 
 ## Licensing and attribution
 
-No blanket license is granted for contributed textures, models or third-party work. Each partner's written redistribution permission must cover the public GitHub repository, downloadable ZIP, Minecraft client resource pack, and the intended Showcase distribution. See [ATTRIBUTION.md](ATTRIBUTION.md).
+No blanket license is granted for contributed textures, models or third-party work. Each partner's written redistribution permission must cover the public GitHub repository, downloadable ZIP, Minecraft client resource pack, and the intended Showcase distribution. See [ATTRIBUTION.md](ATTRIBUTION.md) and the [contribution approval process](docs/legal/CONTRIBUTION-PROCESS.md). The [end-user content license](docs/legal/END-USER-CONTENT-LICENSE.DRAFT.md) remains a **draft and is not yet in effect**.
