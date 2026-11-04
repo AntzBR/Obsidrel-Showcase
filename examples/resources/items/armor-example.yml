@@ -1,0 +1,48 @@
+# Obsidrel 0.9.0 armor examples.
+# Armor metadata lives on the custom item so the normal Item Engine remains the source of truth.
+ruby_helmet:
+  material: IRON_HELMET
+  name: '<secondary><bold>Ruby Helmet</bold></secondary>'
+  lore:
+    - '<muted>Example custom armor piece.</muted>'
+    - '<dusk>Set: Ruby Guard</dusk>'
+  armor:
+    enabled: true
+    slot: HEAD
+    set: ruby_guard
+    conditions: []
+    equip-actions: []
+    unequip-actions: []
+
+ruby_chestplate:
+  material: IRON_CHESTPLATE
+  name: '<secondary><bold>Ruby Chestplate</bold></secondary>'
+  lore:
+    - '<muted>Example custom armor piece.</muted>'
+    - '<dusk>Set: Ruby Guard</dusk>'
+  armor:
+    enabled: true
+    slot: CHEST
+    set: ruby_guard
+
+ruby_leggings:
+  material: IRON_LEGGINGS
+  name: '<secondary><bold>Ruby Leggings</bold></secondary>'
+  lore:
+    - '<muted>Example custom armor piece.</muted>'
+    - '<dusk>Set: Ruby Guard</dusk>'
+  armor:
+    enabled: true
+    slot: LEGS
+    set: ruby_guard
+
+ruby_boots:
+  material: IRON_BOOTS
+  name: '<secondary><bold>Ruby Boots</bold></secondary>'
+  lore:
+    - '<muted>Example custom armor piece.</muted>'
+    - '<dusk>Set: Ruby Guard</dusk>'
+  armor:
+    enabled: true
+    slot: FEET
+    set: ruby_guard

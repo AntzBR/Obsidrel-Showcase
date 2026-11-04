@@ -1,0 +1,87 @@
+ruby_block:
+  name: '<red><bold>Ruby Block</bold></red>'
+  lore:
+    - '<gray>A complete Obsidrel custom block example.</gray>'
+
+  model:
+    path: obsidrel:block/ruby_block
+    texture: minecraft:block/redstone_block
+    parent: minecraft:block/cube_all
+
+    # Visual shape used when Obsidrel has to generate the model JSON.
+    # FULL -> texture key "all" (cube/full-block parents)
+    # CROSS -> texture key "cross" (plants/flowers using minecraft:block/cross)
+    shape: FULL
+
+    # Optional client-side animated texture. The PNG must be a vertical frame strip.
+    # Obsidrel generates <texture>.png.mcmeta during pack build. No server task is used.
+    # animation:
+    #   frametime: 3
+    #   interpolate: false
+    #   frames: [0, 1, 2, 1] # optional; omit to play every frame in order
+
+  # Physical/render carrier used for the placed block.
+  # NOTE_BLOCK  -> default solid carrier with the largest state pool.
+  # STRING      -> plant/cross/cutout carrier backed by tripwire.
+  # GRATE       -> transparent full-block carrier backed by copper grates when available.
+  # Aliases: PLANT -> STRING, TRANSPARENT -> GRATE.
+  carrier:
+    type: NOTE_BLOCK
+
+  placement:
+    # NONE, HORIZONTAL, HORIZONTAL_OPPOSITE, FACE or AXIS.
+    # Directional modes consume one stable carrier state per orientation.
+    orientation: NONE
+    permission: ''
+    worlds: []
+    allowed-faces: []
+    require-solid-support: false
+    # min-y: -64
+    # max-y: 320
+
+  breaking:
+    hardness: 4.0
+
+    tools:
+      required: true
+      types:
+        - PICKAXE
+      minimum-tier: IRON
+
+    drops:
+      silk-touch:
+        enabled: true
+        item: obsidrel:ruby_block
+
+      # Alternative in 0.8.1: set breaking.loot.table to a Loot Engine table.
+      # When a table is set, normal entries below are not used.
+      # Example: table: obsidrel:ruby_block
+      normal:
+        - item: obsidrel:ruby
+          amount: 4
+          chance: 100.0
+
+    # Reusable Loot Engine integration (uncomment to use instead of breaking.drops.normal):
+    # loot:
+    #   table: obsidrel:ruby_block
+
+    experience:
+      min: 2
+      max: 5
+
+  sounds:
+    place: BLOCK_DEEPSLATE_PLACE
+    break: BLOCK_DEEPSLATE_BREAK
+    step: BLOCK_DEEPSLATE_STEP
+    hit: BLOCK_DEEPSLATE_HIT
+
+  effects:
+    break-particle-material: REDSTONE_BLOCK
+    break-particle-count: 16
+
+  drops:
+    self: false
+    creative: false
+
+  protection:
+    explosions: true

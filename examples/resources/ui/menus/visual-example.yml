@@ -1,0 +1,84 @@
+# Reference menu inspired by bitmap inventory GUIs such as DiamondGUI.
+# This file is disabled by default because no third-party artwork is bundled with Obsidrel.
+# To test with your DiamondGUI package:
+# 1) copy diamond_menu.png to plugins/Obsidrel/resources/ui/backgrounds/diamond_menu.png
+# 2) set enabled: true
+# 3) /obsidrel reload
+# 4) /obsidrel pack build (online players receive the rebuilt pack automatically when live refresh is enabled)
+# 5) open this menu with /obsidrel menu diamond_gui_reference
+
+diamond_gui_reference:
+  enabled: false
+  listed: false
+  permission: obsidrel.menu
+  pack-mode: REQUIRE
+  title: '<primary>Visual Menu</primary>'
+  rows: 6
+
+  visual:
+    background:
+      file: diamond_menu.png
+      height: 256
+      ascent: 31
+      shift-x: -48
+
+  fill:
+    material: AIR
+
+  buttons:
+    keys:
+      slots: [0, 1, 2, 9, 10, 11, 18, 19, 20]
+      render: false
+      left-actions:
+        - '[player] keys'
+      right-actions:
+        - '[player] keys'
+
+    ranks:
+      slots: [3, 4, 5, 12, 13, 14, 21, 22, 23]
+      render: false
+      actions:
+        - '[player] ranks'
+
+    auction:
+      slots: [6, 7, 8, 15, 16, 17, 24, 25, 26]
+      render: false
+      actions:
+        - '[player] ah'
+
+    kits:
+      slots: [27, 28, 29, 36, 37, 38, 45, 46, 47]
+      render: false
+      actions:
+        - '[player] kits'
+
+    rtp:
+      slots: [30, 31, 32, 39, 40, 41]
+      render: false
+      actions:
+        - '[player] rtp'
+
+    warps:
+      slots: [33, 34, 35, 42, 43, 44, 51, 52, 53]
+      render: false
+      actions:
+        - '[player] warps'
+
+    stats:
+      slot: 48
+      render: false
+      actions:
+        - '[message] <gold>%player_name%</gold> <gray>•</gray> <white>%player_ping% ms</white>'
+
+    discord:
+      slot: 49
+      render: false
+      left-actions:
+        - '[close]'
+        - '[message] <primary>Configure your Discord link here.</primary>'
+
+    rules:
+      slot: 50
+      render: false
+      actions:
+        - '[message] <primary>Configure your rules action here.</primary>'

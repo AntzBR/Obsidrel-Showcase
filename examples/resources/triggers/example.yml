@@ -1,0 +1,65 @@
+# Trigger examples are disabled so a fresh install never changes gameplay unexpectedly.
+# Enable one, then /obsidrel reload.
+ruby_right_click:
+  enabled: false
+  event: ITEM_USE
+  target: obsidrel:ruby
+  item-trigger: RIGHT_CLICK
+  cancel-event: false
+  actions:
+    - ruby_pulse
+
+ruby_block_break:
+  enabled: false
+  event: BLOCK_BREAK
+  target: obsidrel:ruby_block
+  actions:
+    - ruby_pulse
+
+join_demo:
+  enabled: false
+  event: PLAYER_JOIN
+  target: '*'
+  actions:
+    - ruby_pulse
+
+# Direct Trigger -> Loot integration. AUTO delivery drops rewards at break/kill contexts.
+ruby_block_loot:
+  enabled: false
+  event: BLOCK_BREAK
+  target: obsidrel:ruby_block
+  # ADDITIVE (default) keeps the block's normal drops and adds loot-table rewards.
+  # REPLACE suppresses the normal block/furniture/entity drops for this matched trigger.
+  drop-mode: ADDITIVE
+  # Compatibility alias: replace-default-drops: true
+  loot:
+    - ruby_ore
+
+zombie_loot:
+  enabled: false
+  event: PLAYER_KILL
+  target: minecraft:zombie
+  loot:
+    - ruby_cache
+
+# 0.9.0 equipment events. Disabled by default; enable to validate Trigger Engine integration.
+ruby_helmet_equipped:
+  enabled: false
+  event: ARMOR_EQUIP
+  target: obsidrel:ruby_helmet
+  actions:
+    - ruby_pulse
+
+ruby_guard_full:
+  enabled: false
+  event: ARMOR_SET_ACTIVATE
+  target: obsidrel:ruby_guard
+  actions:
+    - ruby_pulse
+
+ruby_crown_selected:
+  enabled: false
+  event: COSMETIC_EQUIP
+  target: obsidrel:ruby_crown
+  actions:
+    - ruby_pulse

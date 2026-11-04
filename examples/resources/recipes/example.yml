@@ -1,0 +1,82 @@
+# Obsidrel 0.9.1 — Recipes & Crafting
+#
+# Result/input values accept:
+#   - Obsidrel item IDs: obsidrel:ruby
+#   - Obsidrel block IDs
+#   - Obsidrel furniture IDs
+#   - Vanilla materials: DIAMOND or minecraft:diamond
+#   - Item tags: #minecraft:planks
+#
+# Supported types:
+# SHAPED, SHAPELESS, SMELTING, BLASTING, SMOKING,
+# CAMPFIRE, STONECUTTING, SMITHING
+
+ruby_pickaxe:
+  type: SHAPED
+  result: DIAMOND_PICKAXE
+  amount: 1
+  group: obsidrel_ruby
+  shape:
+    - 'RRR'
+    - ' S '
+    - ' S '
+  ingredients:
+    R: obsidrel:ruby
+    S: STICK
+
+ruby_mix:
+  type: SHAPELESS
+  result: obsidrel:ruby_tonic
+  amount: 1
+  ingredients:
+    - HONEY_BOTTLE
+    - obsidrel:ruby
+
+ruby_smelting:
+  type: SMELTING
+  result: obsidrel:ruby
+  input: REDSTONE_ORE
+  amount: 1
+  experience: 0.7
+  cooking-time: 200
+
+ruby_blasting:
+  type: BLASTING
+  result: obsidrel:ruby
+  input: DEEPSLATE_REDSTONE_ORE
+  amount: 1
+  experience: 0.7
+  cooking-time: 100
+
+cooked_ruby_food:
+  type: SMOKING
+  result: COOKED_BEEF
+  input: BEEF
+  amount: 1
+  experience: 0.35
+  cooking-time: 100
+
+campfire_food:
+  type: CAMPFIRE
+  result: COOKED_CHICKEN
+  input: CHICKEN
+  amount: 1
+  experience: 0.35
+  cooking-time: 600
+
+ruby_stonecutting:
+  type: STONECUTTING
+  result: obsidrel:ruby
+  input: EMERALD_BLOCK
+  amount: 4
+
+# Smithing is version-aware:
+# - Minecraft 1.18-1.19 uses base + addition and ignores template.
+# - Minecraft 1.20+ requires template + base + addition.
+ruby_smithing:
+  type: SMITHING
+  result: DIAMOND_SWORD
+  amount: 1
+  template: NETHERITE_UPGRADE_SMITHING_TEMPLATE
+  base: IRON_SWORD
+  addition: obsidrel:ruby

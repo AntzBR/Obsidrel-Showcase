@@ -1,0 +1,18 @@
+# Obsidrel sound event example.
+# This disabled example references a vanilla sound event, so it can be enabled
+# to test the compiler without adding an OGG. For a custom file, use type SOUND,
+# e.g. name: 'obsidrel:ui/click', and place click.ogg in
+# pack/source/assets/obsidrel/sounds/ui/.
+ui_click:
+  enabled: false
+  category: MASTER
+  replace: false
+  sounds:
+    - name: 'minecraft:block.note_block.pling'
+      type: EVENT
+      volume: 1.0
+      pitch: 1.0
+      weight: 1
+      stream: false
+      preload: false
+      attenuation-distance: 16

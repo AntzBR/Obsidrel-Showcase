@@ -1,0 +1,22 @@
+# Armor-set bonuses are evaluated only when equipment changes. There is no global repeating scan.
+ruby_guard:
+  enabled: true
+  permission: ''
+  pieces:
+    head: obsidrel:ruby_helmet
+    chest: obsidrel:ruby_chestplate
+    legs: obsidrel:ruby_leggings
+    feet: obsidrel:ruby_boots
+  bonuses:
+    '2':
+      conditions: []
+      activate-actions:
+        - ruby_guard_2_on
+      deactivate-actions:
+        - ruby_guard_2_off
+    '4':
+      conditions: []
+      activate-actions:
+        - ruby_guard_4_on
+      deactivate-actions:
+        - ruby_guard_4_off

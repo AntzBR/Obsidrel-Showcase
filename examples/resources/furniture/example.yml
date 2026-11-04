@@ -1,0 +1,109 @@
+wooden_chair:
+  name: '<gold><bold>Wooden Chair</bold></gold>'
+  lore:
+    - '<gray>Example Obsidrel furniture.</gray>'
+
+  item:
+    material: PAPER
+
+  model:
+    # Replace this with an authored Blockbench model at:
+    # pack/source/assets/obsidrel/models/furniture/wooden_chair.json
+    path: obsidrel:furniture/wooden_chair
+    texture: minecraft:block/oak_planks
+    parent: minecraft:block/cube_all
+
+  placement:
+    type: FLOOR
+    permission: ''
+    worlds: []
+    require-solid-support: true
+    collision-radius: 0.65
+    rotation:
+      mode: SNAP
+      step: 45
+
+  display:
+    # ItemDisplay transform preset. FIXED keeps the historical Obsidrel behavior.
+    # Other modern presets are accepted, including NONE, GUI, GROUND and HEAD.
+    transform: FIXED
+    offset:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    # Uniform scale for the placed ItemDisplay.
+    # 1.0 = default size, 2.0 = twice as large.
+    scale: 1.0
+
+    # Advanced non-uniform form is also supported:
+    # scale:
+    #   x: 1.0
+    #   y: 1.5
+    #   z: 1.0
+    brightness:
+      block: -1
+      sky: -1
+
+  # Multiple hitboxes are supported. Coordinates are relative to the furniture origin.
+  hitboxes:
+    - x: 0.0
+      y: 0.55
+      z: 0.0
+      width: 0.9
+      height: 1.1
+
+  # Multiple seats are supported.
+  seats:
+    - x: 0.0
+      y: 0.45
+      z: 0.0
+      yaw: 0
+
+  # Optional state engine. State changes are event-driven: no global polling task.
+  # Omit this whole section for static furniture. A state can override model,
+  # hitboxes and seats. Explicit [] removes the base hitboxes/seats for that state.
+  # states:
+  #   default: closed
+  #   toggle-on-interact: true
+  #   values:
+  #     closed:
+  #       model:
+  #         path: obsidrel:furniture/wooden_chair
+  #       sounds:
+  #         enter: block.wooden_door.close
+  #     open:
+  #       model:
+  #         path: obsidrel:furniture/wooden_chair_open
+  #       # State-local display transform. Offset is absolute and yaw-offset
+  #       # is added to the furniture placement yaw. Useful for hinged doors/lids.
+  #       display:
+  #         offset: {x: -0.44, y: 0.0, z: 0.0}
+  #         yaw-offset: 90
+  #       sounds:
+  #         enter: block.wooden_door.open
+  #       # Explicit [] disables the interaction hitboxes while open.
+  #       hitboxes: []
+  #       seats: []
+
+  interactions:
+    commands: []
+    # - '[player] say I am sitting on {furniture}'
+    # - '[console] tell {player} Furniture instance: {uuid}'
+
+  breaking:
+    permission: ''
+    owner-only: false
+    admin-permission: obsidrel.admin
+    drop: obsidrel:wooden_chair
+    creative-drop: false
+
+  protection:
+    explosions: true
+
+  sounds:
+    place: BLOCK_WOOD_PLACE
+    break: BLOCK_WOOD_BREAK
+
+  effects:
+    break-particle-material: OAK_PLANKS
+    break-particle-count: 12

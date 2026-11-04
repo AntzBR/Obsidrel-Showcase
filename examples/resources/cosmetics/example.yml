@@ -1,0 +1,18 @@
+# Cosmetics reference normal Obsidrel items. They do not replace the player's real armor server-side.
+ruby_crown:
+  enabled: true
+  item: obsidrel:ruby_helmet
+  slot: HEAD
+  permission: ''
+  conditions: []
+  equip-actions: []
+  unequip-actions: []
+
+ruby_coat:
+  enabled: true
+  item: obsidrel:ruby_chestplate
+  slot: CHEST
+  permission: ''
+  conditions: []
+  equip-actions: []
+  unequip-actions: []

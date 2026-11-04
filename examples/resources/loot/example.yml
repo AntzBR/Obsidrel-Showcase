@@ -1,0 +1,41 @@
+# Obsidrel 0.8.0 Loot Engine examples.
+# These tables are disabled by default and are safe to use as templates.
+
+ruby_ore:
+  enabled: false
+  mode: ALL
+  rolls: 1
+  delivery: DROP
+  entries:
+    ruby:
+      type: ITEM
+      item: obsidrel:ruby
+      amount: '1-3'
+      chance: 75
+
+    bonus_xp:
+      type: COMMAND
+      command: 'experience add {player} 1 levels'
+      as: CONSOLE
+      chance: 15
+
+ruby_cache:
+  enabled: false
+  mode: WEIGHTED
+  rolls: 2
+  delivery: INVENTORY
+  entries:
+    ruby:
+      item: obsidrel:ruby
+      amount: '1-2'
+      weight: 70
+
+    diamond:
+      item: minecraft:diamond
+      amount: 1
+      weight: 20
+
+    pulse:
+      type: ACTION
+      action: ruby_pulse
+      weight: 10
