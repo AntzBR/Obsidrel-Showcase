@@ -1,0 +1,29 @@
+# Obsidrel 0.8.0 Player Data examples.
+# Definitions are optional: actions/API may also create ad-hoc variables.
+
+coins:
+  type: COUNTER
+  default: 0
+  min: 0
+  description: 'Example persistent currency/counter.'
+
+quest_stage:
+  type: NUMBER
+  default: 0
+  min: 0
+  description: 'Example numeric progression value.'
+
+has_ruby_key:
+  type: FLAG
+  default: false
+  description: 'Example boolean flag.'
+
+player_title:
+  type: TEXT
+  default: 'Newcomer'
+  description: 'Example text value.'
+
+ruby_timer:
+  type: TIMER
+  default: 0
+  description: 'Stores an absolute deadline in milliseconds.'

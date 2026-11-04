@@ -1,0 +1,56 @@
+# Reusable boolean conditions. Conditions may be referenced from actions, triggers and action steps.
+ruby_user:
+  enabled: true
+  message: '<error>You cannot use this ruby here.</error>'
+  type: ALL
+  conditions:
+    survival:
+      type: GAMEMODE
+      gamemodes: [SURVIVAL, ADVENTURE]
+    health:
+      type: HEALTH
+      operator: '>'
+      value: 0
+    ruby_in_hand:
+      type: ITEM
+      item: 'obsidrel:ruby'
+      hand: MAIN_HAND
+
+ruby_level_or_admin:
+  enabled: true
+  message: '<warning>You need level 10 to use this.</warning>'
+  type: OR
+  conditions:
+    level:
+      type: LEVEL
+      operator: '>='
+      value: 10
+    admin:
+      type: PERMISSION
+      permission: 'obsidrel.admin'
+
+ruby_ready:
+  enabled: true
+  type: COOLDOWN
+  cooldown: ruby_use
+
+has_coins:
+  enabled: true
+  message: '<warning>You need at least 10 coins. Current: {var:coins}</warning>'
+  type: VARIABLE
+  variable: coins
+  operator: '>='
+  value: 10
+
+has_ruby_key:
+  enabled: true
+  message: '<error>You do not have the ruby key.</error>'
+  type: FLAG
+  variable: has_ruby_key
+  value: true
+
+ruby_timer_active:
+  enabled: true
+  type: TIMER
+  variable: ruby_timer
+  active: true

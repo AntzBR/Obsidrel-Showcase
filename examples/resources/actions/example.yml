@@ -1,0 +1,118 @@
+# Reusable Action Engine examples.
+# Actions are safe to keep loaded; triggers decide when they run.
+ruby_pulse:
+  enabled: true
+  steps:
+    message:
+      type: MESSAGE
+      message: '<primary><bold>Ruby pulse</bold></primary> <muted>from {source}</muted>'
+
+    sound:
+      type: SOUND
+      sound: 'minecraft:block.note_block.pling'
+      volume: 1.0
+      pitch: 1.25
+
+    particles:
+      type: PARTICLE
+      particle: CLOUD
+      count: 8
+      offset-x: 0.2
+      offset-y: 0.25
+      offset-z: 0.2
+      speed: 0.02
+
+    bar:
+      type: ACTION_BAR
+      delay: 5t
+      message: '<electric>Obsidrel Action Engine</electric> <secondary>•</secondary> <snow>{player}</snow>'
+
+# Demonstrates nesting and a delayed sequence.
+ruby_reward:
+  enabled: true
+  steps:
+    pulse:
+      type: ACTION
+      action: ruby_pulse
+
+    give:
+      type: GIVE_ITEM
+      delay: 10t
+      item: obsidrel:ruby
+      amount: 1
+
+    done:
+      type: MESSAGE
+      delay: 5t
+      message: '<success>Reward delivered.</success>'
+
+# 0.8.0 player-data examples. These actions can be reused by triggers/menus.
+ruby_collect:
+  enabled: true
+  steps:
+    add_counter:
+      type: VAR_ADD
+      variable: coins
+      amount: 1
+    message:
+      type: MESSAGE
+      message: '<success>Coins:</success> <accent>{var:coins}</accent>'
+
+ruby_key_toggle:
+  enabled: true
+  steps:
+    toggle:
+      type: FLAG_TOGGLE
+      variable: has_ruby_key
+    message:
+      type: MESSAGE
+      message: '<muted>Ruby key:</muted> <accent>{flag:has_ruby_key}</accent>'
+
+ruby_timer_start:
+  enabled: true
+  steps:
+    timer:
+      type: TIMER_START
+      variable: ruby_timer
+      duration: 30s
+    message:
+      type: MESSAGE
+      message: '<muted>Ruby timer:</muted> <accent>{timer:ruby_timer}</accent>'
+
+# Rolls a reusable loot table through the Action Engine.
+ruby_loot_roll:
+  enabled: true
+  steps:
+    loot:
+      type: LOOT
+      table: ruby_cache
+      delivery: INVENTORY
+
+# 0.9.0 armor-set validation helpers.
+ruby_guard_2_on:
+  enabled: true
+  steps:
+    message:
+      type: MESSAGE
+      message: '<success>Ruby Guard:</success> <accent>2-piece bonus activated</accent>'
+
+ruby_guard_2_off:
+  enabled: true
+  steps:
+    message:
+      type: MESSAGE
+      message: '<warning>Ruby Guard:</warning> <muted>2-piece bonus deactivated</muted>'
+
+ruby_guard_4_on:
+  enabled: true
+  steps:
+    message:
+      type: MESSAGE
+      message: '<success>Ruby Guard:</success> <accent>4-piece bonus activated</accent>'
+
+ruby_guard_4_off:
+  enabled: true
+  steps:
+    message:
+      type: MESSAGE
+      message: '<warning>Ruby Guard:</warning> <muted>4-piece bonus deactivated</muted>'

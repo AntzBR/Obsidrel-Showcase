@@ -1,0 +1,15 @@
+# Reusable cooldowns. Reference these from a COOLDOWN condition.
+ruby_use:
+  enabled: true
+  duration: 5s
+  scope: PLAYER_ITEM
+  persistent: false
+  bypass-permission: 'obsidrel.admin'
+  message: '<warning>Ruby is cooling down. Try again in <accent>{cooldown_remaining}</accent>.</warning>'
+
+ui_click:
+  enabled: true
+  duration: 750ms
+  scope: PLAYER
+  persistent: false
+  message: '<warning>Please wait <accent>{cooldown_remaining}</accent>.</warning>'

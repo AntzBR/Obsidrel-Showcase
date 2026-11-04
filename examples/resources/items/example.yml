@@ -1,0 +1,104 @@
+ruby:
+  material: EMERALD
+  name: '<red><bold>Ruby</bold></red>'
+  lore:
+    - '<gray>An example Obsidrel item.</gray>'
+  model:
+    path: obsidrel:item/ruby
+    # Put ruby.png in pack/source/assets/obsidrel/textures/item/ and change this to obsidrel:item/ruby for a custom visual.
+    texture: minecraft:item/emerald
+  item:
+    unbreakable: false
+
+ruby_sword:
+  material: DIAMOND_SWORD
+  name: '<red><bold>Ruby Sword</bold></red>'
+  lore:
+    - '<gray>Item mechanics example.</gray>'
+    - '<muted>Right click to launch a ruby bolt.</muted>'
+  model:
+    path: obsidrel:item/ruby_sword
+    texture: minecraft:item/diamond_sword
+  item:
+    unbreakable: false
+    flags:
+      - HIDE_ATTRIBUTES
+  attributes:
+    attack-damage:
+      attribute: ATTACK_DAMAGE
+      amount: 8.0
+      operation: ADD_NUMBER
+      slot: HAND
+    attack-speed:
+      attribute: ATTACK_SPEED
+      amount: -2.4
+      operation: ADD_NUMBER
+      slot: HAND
+  enchantments:
+    sharpness: 2
+  durability:
+    enabled: true
+    max: 1200
+    show-bar: true
+  mechanics:
+    ruby-bolt:
+      type: PROJECTILE
+      trigger: RIGHT_CLICK
+      cooldown: 2s
+      durability-cost: 1
+      cancel-event: true
+      projectile: SNOWBALL
+      velocity: 1.6
+      damage: 4.0
+      fire-ticks: 0
+  recipes:
+    crafting:
+      type: SHAPED
+      amount: 1
+      shape:
+        - ' R '
+        - ' R '
+        - ' S '
+      ingredients:
+        R: obsidrel:ruby
+        S: STICK
+
+ruby_tonic:
+  material: HONEY_BOTTLE
+  name: '<secondary><bold>Ruby Tonic</bold></secondary>'
+  lore:
+    - '<gray>A simple custom consumable.</gray>'
+  model:
+    path: obsidrel:item/ruby_tonic
+    texture: minecraft:item/honey_bottle
+  # 0.8.1 shorthand. Internally this is still the reusable CONSUMABLE mechanic.
+  consumable:
+    enabled: true
+    trigger: RIGHT_CLICK
+    mode: USE
+    animation: DRINK
+    duration: 32
+    consume-particles: true
+    cooldown: 3s
+    consume-item: true
+    consume-amount: 1
+    return-item: GLASS_BOTTLE
+    food: 2
+    saturation: 2.0
+    health: 2.0
+    # Optional reusable 0.8.0 engines:
+    conditions: []
+    actions: []
+    effects:
+      - type: SPEED
+        duration: 100
+        amplifier: 0
+        particles: true
+        icon: true
+  recipes:
+    mix:
+      type: SHAPELESS
+      amount: 1
+      ingredients:
+        - HONEY_BOTTLE
+        - obsidrel:ruby

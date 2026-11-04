@@ -1,0 +1,422 @@
+# Obsidrel Custom Entity Motion, Action, Behavior, Navigation & Animation Controller
+#
+# Persistence remains world-native: the LivingEntity stores the Obsidrel id in
+# its PDC. Display parts, hurtboxes and controller sessions are derived runtime
+# state and are rebuilt on chunk load/restart.
+# Entity definitions never create themselves automatically; spawning remains an
+# explicit command/API/action responsibility in the Obsidrel core.
+#
+# Movement is separated from animation/action authoring:
+#   controller: GROUND | AIR | WATER
+#   locomotion: WALK | HOP | SLITHER | CRAWL | FLAP | GLIDE | SWIM | FLOAT | TREAD
+#
+# Legacy compatibility remains supported:
+#   profile: GROUND -> controller GROUND
+#   profile: FLY/HOVER -> controller AIR
+#   profile: SWIM -> controller WATER
+#
+# AIR modes:
+#   TAKEOFF, FLAP, GLIDE, HOVER, ORBIT, CLIMB, DESCEND, DIVE, LAND, PERCH
+# WATER modes:
+#   SWIM, TREAD, FLOAT, DIVE, ASCEND, DASH, SURFACE
+#
+# Scripted action primitives:
+#   HOLD, MOVE_TO, LUNGE, JUMP, LEAP, CHARGE, ORBIT, HOVER,
+#   DIVE, CLIMB, DESCEND, DASH, LAND
+#
+# Example skeleton:
+# example_creature:
+#   name: '<aqua><bold>Example Creature</bold></aqua>'
+#   body:
+#     type: ZOMBIE
+#     visible: false
+#     ai: true
+#     silent: true
+#     persistent: true
+#     remove-when-far-away: false
+#     inherit-native-effects: false
+#   model:
+#     material: PAPER
+#     path: obsidrel:entity/example_creature
+#     parent: obsidrel:entity/example_creature_geometry
+#     texture: obsidrel:item/entity/example_creature
+#     offset: { x: 0, y: 0, z: 0 }
+#     scale: 1.0
+#   attributes:
+#     max-health: 40
+#     attack-damage: 7
+#     movement-speed: 0.23
+#     knockback-resistance: 0.5
+#   hitbox:
+#     scale: 1.0
+#   movement:
+#     enabled: true
+#     controller: GROUND
+#     default-mode: GROUND
+#     locomotion: WALK
+#     target: NEAREST_PLAYER # NONE | NEAREST_PLAYER | WANDER
+#     target-range: 18
+#     stop-distance: 2
+#     entity-collision: true # false prevents the logical body from pushing players/entities
+#
+#     # Visual size, logical collision and navigation clearance are
+#     # independent. visual-bounds is metadata for large/imported rigs;
+#     # navigation.clearance defines the free envelope required by pathing.
+#     visual-bounds: { width: 1.4, height: 2.1, length: 2.4 }
+#     navigation:
+#       clearance: { horizontal: 0.55, vertical: 1.9 }
+#       safe-destination-attempts: 16
+#       obstacle-avoidance:
+#         enabled: true
+#         probe-distance: 1.8
+#       separation:
+#         enabled: false
+#         radius: 1.6
+#         strength: 0.20
+#       # Occupancy is a hard minimum custom-entity spacing
+#       # constraint; separation remains a soft steering force.
+#       occupancy:
+#         enabled: false
+#         minimum-distance: 1.1
+#       ground:
+#         max-step-height: 1.0
+#         max-drop-height: 2.0
+#       water:
+#         minimum-depth: 0.0
+#         # maximum-depth: 8.0
+#     ground-water:
+#       behavior: ESCAPE # VANILLA | ESCAPE
+#       search-radius: 8
+#       jump-assist: true
+#     animation:
+#       idle: idle
+#       moving: walk
+#   drops:
+#     replace-vanilla: true
+#     experience: 5
+#     loot-table: ''
+#   actions:
+#     spawn: []
+#     death: []
+#
+# AIR controller example:
+#   movement:
+#     enabled: true
+#     controller: AIR
+#     default-mode: ORBIT
+#     locomotion: FLAP
+#     target: NEAREST_PLAYER
+#     speed: 0.24
+#     turn-speed: 18
+#     visual-yaw-offset: 0 # rotate only the rendered rig; physical heading stays unchanged
+#     target-range: 22
+#     stop-distance: 5
+#     altitude:
+#       reference: GROUND # TARGET | GROUND | HOME
+#       min: 3
+#       max: 6
+#     vertical-target-range: 12 # ignore targets too far above/below
+#     vertical-speed: 0.18
+#     minimum-ground-clearance: 4 # AIR only; DIVE/LAND may temporarily cross it
+#     collision-radius: 0.35 # horizontal clearance; full body height is collision-checked
+#     animation:
+#       idle: hover
+#       moving: flap
+#       modes:
+#         HOVER: hover
+#         FLAP: flap
+#         GLIDE: glide
+#         ORBIT: glide
+#         DIVE: dive
+#         CLIMB: flap
+#
+# WATER controller example:
+#   movement:
+#     enabled: true
+#     controller: WATER
+#     default-mode: SWIM
+#     locomotion: SWIM
+#     target: NEAREST_PLAYER
+#     speed: 0.18
+#     vertical-speed: 0.12
+#     pose-transition-ticks: 10 # smoothly interpolate mode pitch changes
+#     collision-radius: 0.48 # horizontal controlled/navigation clearance
+#     collision-height: 0.9 # 0 = logical body height; useful for long/flat custom models
+#     water-envelope: LOWER # LOWER allows surfacing; FULL keeps the whole logical body submerged
+#     dry-target-mode: TREAD # optional WATER posture near a target standing on dry land
+#     entity-collision: false # useful for display-driven swimmers that should not push players
+#     # Optional rendered rig pitch per physical mode. Useful for creatures
+#     # that tread vertically but swim horizontally (mermaids, sharks, etc.).
+#     visual-pitch-modes:
+#       TREAD: 0
+#       SWIM: -78
+#       DIVE: -96
+#       ASCEND: -58
+#     animation:
+#       idle: tread
+#       moving: swim
+#       modes:
+#         TREAD: tread
+#         SWIM: swim
+#         DIVE: dive
+#         ASCEND: ascend
+#         DASH: dash
+#
+# Programmable behavior graph:
+#   movement:
+#     behavior:
+#       enabled: true
+#       initial-state: orbit
+#       avoid-immediate-repeat: true
+#       states:
+#         orbit:
+#           mode: ORBIT
+#           clip: glide # optional state-specific locomotion clip
+#           # AUTO follows the normal target. CURRENT/HOME hold a point;
+#           # RANDOM_HOME/RANDOM_CURRENT/RANDOM_TARGET choose one random
+#           # destination around that anchor when the state starts.
+#           destination: AUTO
+#           duration: { min: 40, max: 100 }
+#           cooldown: 20
+#           speed-multiplier: 0.95
+#           radius: { min: 5, max: 9 }
+#           altitude: { min: 6, max: 10 }
+#           transitions:
+#             - to: climb
+#               weight: 35
+#               cooldown: 30
+#               conditions:
+#                 target: REQUIRED # ANY | REQUIRED | ABSENT
+#                 distance: { min: 3, max: 16 }
+#                 vertical-delta: { min: -12, max: 12 }
+#         climb:
+#           mode: CLIMB
+#           # States may complete from physical conditions instead of
+#           # depending only on a timer. Configured conditions are ANDed.
+#           duration: { min: 2, max: 80 }
+#           timeout: 80 # failsafe; omit when no timeout is wanted
+#           complete-when:
+#             minimum-height-above-target: 7
+#             # destination-distance: 0.75
+#             # minimum-ground-clearance: 5
+#           altitude: { min: 9, max: 14 }
+#           transitions:
+#             - { to: orbit, weight: 60 }
+#       # Optional bridge from scripted actions back into the graph.
+#       actions:
+#         dive_attack:
+#           allowed-states: [orbit]
+#           min-height-above-target: 4 # useful for dive attacks
+#           success: climb
+#           cancel: orbit
+#
+#
+# Passive rideable GROUND example (modern server input is read reflectively):
+#   movement:
+#     enabled: true
+#     controller: GROUND
+#     target: NONE
+#     rideable:
+#       enabled: true
+#       speed: 0.23
+#       sprint-multiplier: 1.35
+#       jump-velocity: 0.50
+#     behavior:
+#       enabled: true
+#       initial-state: idle
+#       states:
+#         idle:
+#           mode: GROUND
+#           clip: idle
+#           destination: CURRENT
+#           speed-multiplier: 0
+#           duration: { min: 40, max: 100 }
+#           transitions:
+#             - { to: wander, weight: 60 }
+#             - { to: graze, weight: 40 }
+#         wander:
+#           mode: GROUND
+#           # no forced clip: movement.animation.moving is used only while the
+#           # body is actually travelling, preventing walk-in-place visuals.
+#           destination: RANDOM_HOME
+#           radius: { min: 3, max: 10 }
+#           duration: { min: 50, max: 120 }
+#           transitions:
+#             - { to: idle, weight: 55 }
+#             - { to: graze, weight: 45 }
+#         graze:
+#           mode: GROUND
+#           clip: graze
+#           destination: CURRENT
+#           speed-multiplier: 0
+#           duration: { min: 60, max: 140 }
+#           transitions:
+#             - { to: wander, weight: 100 }
+#
+# Serpent trail example (animation part ids must exist):
+#   movement:
+#     enabled: true
+#     controller: GROUND
+#     locomotion: SLITHER
+#     trail:
+#       enabled: true
+#       parts: [neck, body_1, body_2, body_3, tail]
+#       sample-delay: 1
+#       max-samples: 64
+#
+# Multipart hurtboxes follow visual rig parts and route damage to the logical body:
+#   hurtboxes:
+#     head:
+#       part: head
+#       size: { x: 0.9, y: 0.8, z: 0.9 }
+#       damage-multiplier: 1.5
+#     tail:
+#       part: tail
+#       size: { x: 0.55, y: 0.4, z: 0.8 }
+#       damage-multiplier: 0.7
+#
+# Attack volumes are transient hit regions activated by action phases:
+#   attack-volumes:
+#     strike:
+#       shape: CAPSULE # SPHERE | BOX | CAPSULE
+#       anchor: head
+#       length: 2.2
+#       radius: 0.55
+#       damage: 8.0
+#       once-per-target: true
+#
+# Scripted actions temporarily combine animation + movement + hit regions:
+#   actions:
+#     spawn: []
+#     death: []
+#     strike:
+#       trigger: TARGET_IN_RANGE # NONE | TARGET_IN_RANGE | ATTACK | HURT
+#       trigger-min-range: 0.75
+#       trigger-range: 3.0
+#       facing-tolerance: 45 # degrees; 180 disables facing gate
+#       require-line-of-sight: true
+#       cooldown: 48
+#       priority: 55
+#       interruptible: false
+#       phases:
+#         - duration: 10
+#           clip: raise_head
+#           movement: { primitive: HOLD, face-target: true }
+#         - duration: 6
+#           clip: strike
+#           movement: { primitive: LUNGE, distance: 2.2, face-target: true }
+#           attack: { volume: strike }
+#         - duration: 10
+#           clip: retract
+#           movement: { primitive: HOLD, face-target: true }
+#
+# Overlay actions preserve locomotion underneath the authored action pose:
+#   actions:
+#     swipe:
+#       trigger: TARGET_IN_RANGE
+#       trigger-range: 2.5
+#       cooldown: 40
+#       phases:
+#         - duration: 10
+#           clip: swipe
+#           animation-mode: OVERLAY
+#           movement: { primitive: HOLD }
+
+# Animation Controller example:
+#   animations:
+#     enabled: true
+#     activation-range: 48
+#     interpolation-ticks: 2
+#     # Generic rig: LEGACY (default) or SKELETAL. Importers should emit
+#     # SKELETAL so every part is resolved through one parent/child transform tree.
+#     rig-mode: SKELETAL
+#     controller:
+#       transition: { duration: 8, easing: EASE_IN_OUT }
+#       action-overlay-weight: 0.85
+#       speed-sync:
+#         enabled: true
+#         reference-speed: 0.18
+#         min-factor: 0.65
+#         max-factor: 1.60
+#       idle-variants:
+#         interval: { min: 60, max: 160 }
+#         clips:
+#           - { clip: look_left, weight: 2 }
+#           - { clip: look_right, weight: 2 }
+#       interrupt-priority:
+#         hurt: 60
+#         attack: 70
+#         death: 1000
+#     parts:
+#       body:
+#         material: PAPER
+#         model: obsidrel:entity/example_body
+#         texture: obsidrel:item/entity/example
+#         offset: { x: 0, y: 1, z: 0 } # bind pose
+#       head:
+#         material: PAPER
+#         model: obsidrel:entity/example_head
+#         texture: obsidrel:item/entity/example
+#         bone-parent: body # local bind transform inherits body transform
+#         offset: { x: 0, y: 0.65, z: -0.20 } # joint/bind position relative to parent
+#         model-offset: { x: 0, y: -0.35, z: 0 } # joint -> mesh origin before scale
+#         # Imported/Blockbench rigs may declare parts in any file order. The loader
+#         # validates unknown parents, cycles and hierarchy depth before registration.
+#     clips:
+#       idle:
+#         playback: LOOP # LOOP | ONCE | HOLD | PING_PONG
+#         duration: 40
+#         speed: 1.0
+#         tracks: {}
+#       attack:
+#         playback: ONCE
+#         duration: 18
+#         transition: { duration: 3, easing: EASE_OUT }
+#         events:
+#           '8':
+#             - { type: SOUND, sound: entity.player.attack.sweep, volume: 0.7, pitch: 1.0 }
+#             - { type: MARKER, marker: impact }
+#         tracks: {}
+#
+# Steerable VEHICLE example (spawn is still explicit command/API/action only):
+#   movement:
+#     enabled: true
+#     controller: GROUND
+#     target: NONE
+#     rideable:
+#       enabled: true
+#       control: VEHICLE # DIRECT keeps the legacy mount behavior
+#       native-carrier: false # Obsidrel owns movement; logical body is only the seat/root
+#       speed: 0.38
+#       sprint-multiplier: 1.20
+#       jump-enabled: false
+#       acceleration: 0.025
+#       braking: 0.065
+#       drag: 0.020
+#       reverse-multiplier: 0.50
+#       steering-degrees: 5.0
+#       damage-reaction: false # vehicles do not inherit living-mob HURT bending
+#       surface-alignment:
+#         enabled: true
+#         max-pitch: 16
+#         smoothing: 0.20
+#   animations:
+#     controller:
+#       speed-sync: { enabled: true, reference-speed: 0.18, min-factor: 0.5, max-factor: 2.5 }
+#       vehicle-steering:
+#         enabled: true
+#         parts: [front_left_wheel, front_right_wheel]
+#         max-angle: 24
+#       vehicle-wheels:
+#         enabled: true
+#         radius: 0.22
+#         parts:
+#           front_left_wheel: 1.0
+#           front_right_wheel: 1.0
+#           rear_left_wheel: 1.0
+#           rear_right_wheel: 1.0
+#
+# Resource-pack targeting:
+#   Minecraft 26.4 / Resource Pack 98.0 is a PREVIEW mapping. It is
+#   accepted by the pack validator for snapshot testing but is deliberately not
+#   promoted to the tested production ceiling until the release is validated.

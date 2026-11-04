@@ -6,6 +6,10 @@ This repository contains **converted Obsidrel definitions and Minecraft resource
 
 > **Status:** Repository structure only; no official third-party Showcase assets have been published. The Core's remote downloader and dynamic catalog have been tested separately. Official publication remains gated on contributor authorization, technical validation, and a finalized content license.
 
+## Optional reference examples
+
+Historical Core 1.0.0 sample YAMLs are staged in [`examples/resources/`](examples/README.md). These files are not included in Showcase releases. The `build_showcase.py` script packages only the top-level `resources/` and `pack/` directories; examples must be selected, validated and deliberately promoted before publication.
+
 ## Installing the Showcase on a Minecraft server
 
 > No official Showcase Release is available yet. The following instructions apply once an approved, non-draft Release containing `showcase.zip` and `showcase.sha256` has been published.

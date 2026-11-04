@@ -1,0 +1,24 @@
+# Obsidrel managed bitmap font example.
+# Enable it to test the glyph engine without adding a custom PNG: the example
+# references a vanilla texture. For your own icon, use for example
+# texture: 'obsidrel:font/orb.png' and place orb.png in
+# pack/source/assets/obsidrel/textures/font/.
+#
+# Chat bridge:
+# - aliases remain available to Obsidrel MiniMessage rendering when Text.aliases.enabled is true.
+# - chat.enabled additionally exposes this glyph in minecraft:default, allowing aliases in normal player chat.
+# - chat.permission can be blank for public use or a normal Bukkit permission node.
+icons:
+  enabled: false
+  glyphs:
+    orb:
+      texture: 'minecraft:item/emerald.png'
+      codepoint: AUTO
+      aliases:
+        - ':orb:'
+        - ':gem:'
+      height: 8
+      ascent: 8
+      chat:
+        enabled: true
+        permission: ''
